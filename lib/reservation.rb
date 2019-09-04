@@ -18,7 +18,7 @@ module Hotel
     end
     
     def create_date_range(start_date, end_date)
-      res_length = (end_date - start_date + 1).to_i
+      res_length = (end_date - start_date).to_i
       res_length.times do |i|
         @date_range << (start_date + i)
       end

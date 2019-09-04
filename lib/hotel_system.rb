@@ -17,7 +17,7 @@ module Hotel
     end
     
     def make_reservation(start_date, end_date)
-      available_room_id = find_room(start_date, end_date)
+      available_room_id = find_rooms(start_date, end_date).first.to_i
       
       new_reservation = Hotel::Reservation.new(start_date, end_date, available_room_id)
       
@@ -40,19 +40,14 @@ module Hotel
     
     def find_available_rooms(date)
       available_rooms = @rooms.reject do |room|
-        room.dates_reserved.include?(date) && (room.dates_reserved.index(date) < (room.dates_reserved.length - 1))
+        room.dates_reserved.include?(date)
       end
       
       return available_rooms
     end
     
-    def find_room(start_date, end_date)
-      #stuck
-      # no_reservations = @rooms.select { |room| room.dates_reserved == []}
-      
-      # return no_reservations.first if no_reservations != []
-      
-      res_length = (end_date - start_date + 1).to_i
+    def find_rooms(start_date, end_date)      
+      res_length = (end_date - start_date).to_i
       
       date_range = []
       
@@ -77,7 +72,7 @@ module Hotel
       
       available_rooms.select!{|k,v| v == 0}
       
-      return available_rooms.keys.first.to_i unless available_rooms == {}
+      return available_rooms.keys unless available_rooms == {}
       
       raise ArgumentError, "No rooms available at this time"
     end

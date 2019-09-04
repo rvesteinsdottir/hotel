@@ -51,10 +51,14 @@ describe "Hotel System class" do
       
       @system.make_reservation( Date.new(2019,9,1), Date.new(2019,9,3))
       
+      @system.make_reservation( Date.new(2019,9,3), Date.new(2019,9,4))
+      
       @system.make_reservation(Date.new(2019,9,3), Date.new(2019,9,4))
     end
     
+    
     it "returns a list of all reservations for a specific date" do
+      # excludes reservations that are on their final day
       expect(@system.find_reservations(Date.new(2019,9,3)).length).must_equal 2
       expect(@system.find_reservations(Date.new(2019,9,3)).first).must_be_kind_of Hotel::Reservation
       expect(@system.find_reservations(Date.new(2019,9,3)).last).must_be_kind_of Hotel::Reservation
@@ -70,15 +74,14 @@ describe "Hotel System class" do
     end
     
     it "returns a list of all rooms that are available for a specific date" do
-      available_date = Date.new(2019,9,3)
+      
       expect(@system.find_available_rooms(Date.new(2019,8,29)).length).must_equal 20
       
       # 18 rooms available since a room can be available on the final day of a previous reservation
-      expect(@system.find_available_rooms(available_date).length).must_equal 18
+      expect(@system.find_available_rooms(Date.new(2019,9,3)).length).must_equal 18
       
       # 19 rooms available since a room can be available on the final day of a previous reservation
-      expect(@system.find_available_rooms(Date.new(2019,9,5)).length).must_equal 19
-      
+      expect(@system.find_available_rooms(Date.new(2019,9,4)).length).must_equal 19
     end
     
     
