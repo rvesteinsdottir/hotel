@@ -2,7 +2,7 @@ require_relative 'room'
 
 module Hotel
   class Reservation
-    attr_reader :cost, :date_range
+    attr_reader :cost, :date_range, :room_id
     
     def initialize(start_date, end_date, room_id)
       raise ArgumentError unless start_date.class == Date && end_date.class == Date

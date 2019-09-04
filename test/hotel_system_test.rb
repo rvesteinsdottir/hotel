@@ -28,21 +28,14 @@ describe "Hotel System class" do
       @system = Hotel::HotelSystem.new
     end
     
-    it "returns instance of reservation when given start and end date" do
-      start_d = Date.new(2019,9,1)
-      end_d = Date.new(2019,9,3)
-      expect(@system.make_reservation(start_d, end_d)).must_be_kind_of Hotel::Reservation
+    it "adds an instance of reservation to reservation list" do
+      expect(@system.reservations.length).must_equal 0
+      
+      new_reservation = @system.make_reservation(Date.new(2019,9,1), Date.new(2019,9,3))
+      
+      expect(@system.reservations.last.room_id).must_equal new_reservation.room_id
+      expect(@system.reservations.length).must_equal 1
     end
-    
-    # it "marks room as 'reserved' when making reservation" do
-    #   start_d = Date.new(2019,9,1)
-    #   end_d = Date.new(2019,9,3)
-    #   expect(@system.rooms.select{|room| room.status == "RESERVED"}).must_equal []
-    
-    #   @system.make_reservation(start_d, end_d)
-    
-    #   expect(@system.rooms.select{|room| room.status == "RESERVED"}.length).must_equal 1
-    # end
   end
   
   describe "find_reservations" do
@@ -87,5 +80,16 @@ describe "Hotel System class" do
     it "returns a list of all rooms that are available for a date range" do
       expect(@system.find_available_rooms(Date.new(2019,9,4),Date.new(2019,9,5)).length).must_equal 19
     end
+    
+    it "exception is raised if no available rooms in date range" do
+      18.times do
+        @system.make_reservation(Date.new(2019,9,1), Date.new(2019,9,5))
+      end
+      
+      expect{
+        @system.make_reservation(Date.new(2019,9,1), Date.new(2019,9,5))
+      }.must_raise ArgumentError
+    end
+    
   end
 end
