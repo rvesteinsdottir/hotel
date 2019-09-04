@@ -84,6 +84,8 @@ describe "Hotel System class" do
       expect(@system.find_available_rooms(Date.new(2019,9,4)).length).must_equal 19
     end
     
-    
+    it "returns a list of all rooms that are available for a date range" do
+      expect(@system.find_available_rooms(Date.new(2019,9,4),Date.new(2019,9,5)).length).must_equal 19
+    end
   end
 end

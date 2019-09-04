@@ -38,9 +38,13 @@ module Hotel
       return res_on_date
     end
     
-    def find_available_rooms(date)
-      available_rooms = @rooms.reject do |room|
-        room.dates_reserved.include?(date)
+    def find_available_rooms(start_date, end_date = nil)
+      if end_date == nil
+        available_rooms = @rooms.select do |room|
+          room.id unless room.dates_reserved.include?(start_date)
+        end
+      else
+        available_rooms = find_rooms(start_date, end_date)
       end
       
       return available_rooms
