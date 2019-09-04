@@ -64,7 +64,7 @@ describe "Hotel System class" do
   describe "find_available_rooms" do
     before do
       @system = Hotel::HotelSystem.new
-      @system.make_reservation( Date.new(2019,9,1), Date.new(2019,9,3))
+      @system.make_reservation( Date.new(2019,9,1), Date.new(2019,9,5))
       
       @system.make_reservation(Date.new(2019,9,3), Date.new(2019,9,4))
     end
@@ -73,7 +73,12 @@ describe "Hotel System class" do
       available_date = Date.new(2019,9,3)
       expect(@system.find_available_rooms(Date.new(2019,8,29)).length).must_equal 20
       
+      # 18 rooms available since a room can be available on the final day of a previous reservation
       expect(@system.find_available_rooms(available_date).length).must_equal 18
+      
+      # 19 rooms available since a room can be available on the final day of a previous reservation
+      expect(@system.find_available_rooms(Date.new(2019,9,5)).length).must_equal 19
+      
     end
     
     
