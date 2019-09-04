@@ -17,9 +17,11 @@ module Hotel
     end
     
     def make_reservation(start_date, end_date)
-      available_room_id = find_rooms(start_date, end_date).first.to_i
+      res_dates = convert_to_range(start_date, end_date)
       
-      new_reservation = Hotel::Reservation.new(start_date, end_date, available_room_id)
+      available_room_id = find_rooms(res_dates).first.to_i
+      
+      new_reservation = Hotel::Reservation.new(res_dates, available_room_id)
       
       new_reservation.date_range.each do |date|
         rooms[available_room_id - 1].dates_reserved << date
@@ -39,25 +41,26 @@ module Hotel
     end
     
     def find_available_rooms(start_date, end_date = nil)
-      if end_date == nil
+      date_range = convert_to_range(start_date, end_date)
+      if date_range.length == 1
         available_rooms = @rooms.select do |room|
-          room.id unless room.dates_reserved.include?(start_date)
+          room.id unless room.dates_reserved.include?(date_range[0])
         end
       else
-        available_rooms = find_rooms(start_date, end_date)
+        available_rooms = find_rooms(date_range)
       end
       
       return available_rooms
     end
     
-    def find_rooms(start_date, end_date)      
-      res_length = (end_date - start_date).to_i
+    def find_rooms(date_range)      
+      # res_length = (end_date - start_date).to_i
       
-      date_range = []
+      # date_range = []
       
-      res_length.times do |i|
-        date_range << (start_date + i)
-      end
+      # res_length.times do |i|
+      #   date_range << (start_date + i)
+      # end
       
       available_rooms = {}
       @rooms.each do |room|
@@ -81,5 +84,18 @@ module Hotel
       raise ArgumentError, "No rooms available at this time"
     end
     
+    def convert_to_range(start_date, end_date)
+      date_range = []
+      if end_date == nil
+        date_range << start_date
+      else
+        res_length = (end_date - start_date).to_i
+        res_length.times do |i|
+          date_range << (start_date + i) 
+        end
+      end
+      
+      return date_range
+    end
   end
 end

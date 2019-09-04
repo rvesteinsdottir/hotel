@@ -4,25 +4,24 @@ module Hotel
   class Reservation
     attr_reader :cost, :date_range, :room_id
     
-    def initialize(start_date, end_date, room_id)
-      raise ArgumentError unless start_date.class == Date && end_date.class == Date
+    def initialize(date_range, room_id)
+      #raise ArgumentError unless date_range.first.class == Date && date_range.last.class == Date
       
-      raise ArgumentError unless (end_date - start_date) >= 1
+      #raise ArgumentError unless (date_range.last - date_range.first) >= 1
       
-      @date_range = []
-      create_date_range(start_date, end_date)
+      @date_range = date_range
       
-      @cost = ((end_date - start_date) * 200).to_f
+      @cost = ((date_range.last - date_range.first) * 200).to_f
       
       @room_id = room_id
     end
     
-    def create_date_range(start_date, end_date)
-      res_length = (end_date - start_date).to_i
-      res_length.times do |i|
-        @date_range << (start_date + i)
-      end
-    end
+    # def create_date_range(start_date, end_date)
+    #   res_length = (end_date - start_date).to_i
+    #   res_length.times do |i|
+    #     @date_range << (start_date + i)
+    #   end
+    # end
     
   end
 end

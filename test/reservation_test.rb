@@ -6,7 +6,7 @@ describe "Reservation class" do
     before do
       @room_test = 7
       
-      @reservation_test = Hotel::Reservation.new(Date.new(2019,9,1), Date.new(2019,9,3), @room_test)
+      @reservation_test = Hotel::Reservation.new([Date.new(2019,9,1), Date.new(2019,9,2)], @room_test)
     end
     
     it "is an instance of reservation" do
@@ -19,7 +19,7 @@ describe "Reservation class" do
     end
     
     it "adds cost variable with cost of reservation" do
-      expect(@reservation_test.cost).must_equal 400
+      expect(@reservation_test.cost).must_equal 200
     end
   end
   
@@ -49,7 +49,7 @@ describe "Reservation class" do
     end    
     
     it "creates date_range with correct length" do
-      reservation_test = Hotel::Reservation.new(Date.new(2019,9,1), Date.new(2019,9,3), @room_test)
+      reservation_test = Hotel::Reservation.new([Date.new(2019,9,1), Date.new(2019,9,2)], @room_test)
       
       expect(reservation_test.date_range.length) == 3
     end

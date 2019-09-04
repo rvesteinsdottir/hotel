@@ -42,9 +42,9 @@ describe "Hotel System class" do
     before do
       @system = Hotel::HotelSystem.new
       
-      @system.make_reservation( Date.new(2019,9,1), Date.new(2019,9,3))
+      @system.make_reservation(Date.new(2019,9,1), Date.new(2019,9,3))
       
-      @system.make_reservation( Date.new(2019,9,3), Date.new(2019,9,4))
+      @system.make_reservation(Date.new(2019,9,3), Date.new(2019,9,4))
       
       @system.make_reservation(Date.new(2019,9,3), Date.new(2019,9,4))
     end
