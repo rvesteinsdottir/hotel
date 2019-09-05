@@ -5,9 +5,10 @@ module Hotel
     attr_reader :cost, :date_range, :room_id
     
     def initialize(date_range, room_id)
-      #raise ArgumentError unless date_range.first.class == Date && date_range.last.class == Date
+      raise ArgumentError unless date_range.first.class == Date && date_range.last.class == Date
       
-      #raise ArgumentError unless (date_range.last - date_range.first) >= 1
+      #no longer needed
+      #raise ArgumentError unless (date_range.last - date_range.first) > 0
       
       @date_range = date_range
       

@@ -17,17 +17,17 @@ module Hotel
     end
     
     def make_reservation(start_date, end_date)
-      res_dates = convert_to_range(start_date, end_date)
+      reservation_dates = convert_to_range(start_date, end_date)
       
-      available_room_id = find_rooms(res_dates).first.to_i
+      available_room_id = find_rooms(reservation_dates).first.to_i
       
-      new_reservation = Hotel::Reservation.new(res_dates, available_room_id)
+      new_reservation = Hotel::Reservation.new(reservation_dates, available_room_id)
       
-      new_reservation.date_range.each do |date|
-        rooms[available_room_id - 1].dates_reserved << date
-      end
-      
+      # adds new reservation object reservations list and selected room
       @reservations << new_reservation
+      new_reservation.date_range.each do |date|
+        @rooms[available_room_id - 1].dates_reserved << date
+      end
       
       return new_reservation
     end
@@ -54,14 +54,6 @@ module Hotel
     end
     
     def find_rooms(date_range)      
-      # res_length = (end_date - start_date).to_i
-      
-      # date_range = []
-      
-      # res_length.times do |i|
-      #   date_range << (start_date + i)
-      # end
-      
       available_rooms = {}
       @rooms.each do |room|
         available_rooms["#{room.id}"] = 0
