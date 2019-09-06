@@ -5,7 +5,7 @@ require_relative 'reservation'
 
 module Hotel
   class HotelSystem
-    attr_reader :rooms, :reservations
+    attr_reader :rooms, :reservations, :blocks
     
     def initialize
       @rooms = []
@@ -14,6 +14,7 @@ module Hotel
       end
       
       @reservations = []
+      @blocks = []
     end
     
     def make_reservation(start_date, end_date)
@@ -28,7 +29,13 @@ module Hotel
     end
     
     def create_block(start_date, end_date, room_numbers)
+      room_numbers.each do |room_id|
+        raise ArgumentError, "Room #{room_id} not available for given date range" unless find_available_rooms(start_date, end_date).include?(room_id)
+      end
       
+      new_block = Hotel::Block.new(start_date, end_date, room_numbers)
+      
+      @blocks << new_block
     end
     
     # Does not list reservations that are on their final day

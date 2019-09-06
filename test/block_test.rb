@@ -11,5 +11,13 @@ describe "Block class" do
     it "is an instance of block" do
       expect(@block_test).must_be_kind_of Hotel::Block
     end
+    
+    it "creates new instance of block with correct room numbers and cost" do
+      expect(@block_test.room_numbers).must_equal [7,9,11]
+      expect(@block_test.cost_per_rm).must_equal 380.0
+      expect(@block_test.start_date).must_equal Date.new(2019,9,1)
+      expect(@block_test.end_date).must_equal Date.new(2019,9,3)
+      expect(@block_test.available_room_numbers).must_equal [7,9,11]
+    end
   end
 end

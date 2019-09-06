@@ -104,5 +104,32 @@ describe "Hotel System class" do
       expect(@system.find_available_rooms(Date.new(2019,8,29),Date.new(2019,8,30)).length).must_equal 20
     end
     
+    it "room that is part of block is not available" do 
+    end
+    
   end
+  
+  describe "create_block" do
+    before do
+      @system = Hotel::HotelSystem.new
+      @system.make_reservation( Date.new(2019,9,1), Date.new(2019,9,5))
+      
+      @system.make_reservation(Date.new(2019,9,3), Date.new(2019,9,4))
+    end
+    
+    it "raises argument error if rooms not available" do
+      expect{@system.create_block(Date.new(2019,9,3), Date.new(2019,9,4), [1,2,5])}.must_raise ArgumentError
+    end
+    
+    it "adds block to list of blocks" do
+      expect(@system.blocks.length).must_equal 0
+      @system.create_block(Date.new(2019,9,19), Date.new(2019,9,20), [1,2,5])
+      expect(@system.blocks.length).must_equal 1
+    end
+  end
+  
+  describe "reserve_from_block" do
+  end
+  
+  
 end
