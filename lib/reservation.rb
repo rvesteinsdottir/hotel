@@ -2,15 +2,17 @@ require_relative 'room'
 
 module Hotel
   class Reservation
-    attr_reader :cost, :date_range, :room_id
+    attr_reader :cost, :start_date, :end_date, :room_id
     
-    def initialize(date_range, room_id)
-      @date_range = date_range
+    def initialize(start_date, end_date = nil, room_id)
+      @start_date = start_date
+      @end_date = end_date
       
-      raise ArgumentError unless date_range.first.class == Date && date_range.last.class == Date
+      raise ArgumentError unless start_date.class == Date && end_date.class == Date
       
-      @cost = ((date_range.last - date_range.first) * 200).to_f
+      raise ArgumentError if end_date <= start_date
       
+      @cost = 200.0
       @room_id = room_id
     end
   end

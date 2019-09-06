@@ -68,13 +68,13 @@ describe "Hotel System class" do
     
     it "returns a list of all rooms that are available for a specific date" do
       
-      expect(@system.find_available_rooms(Date.new(2019,8,29)).length).must_equal 20
+      expect(@system.find_available_rooms(Date.new(2019,8,29), nil).length).must_equal 20
       
       # 18 rooms available since a room can be available on the final day of a previous reservation
-      expect(@system.find_available_rooms(Date.new(2019,9,3)).length).must_equal 18
+      expect(@system.find_available_rooms(Date.new(2019,9,3), nil).length).must_equal 18
       
       # 19 rooms available since a room can be available on the final day of a previous reservation
-      expect(@system.find_available_rooms(Date.new(2019,9,4)).length).must_equal 19
+      expect(@system.find_available_rooms(Date.new(2019,9,4), nil).length).must_equal 19
     end
     
     it "returns a list of all rooms that are available for a date range" do

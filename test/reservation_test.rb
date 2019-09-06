@@ -6,7 +6,7 @@ describe "Reservation class" do
     before do
       @room_test = 7
       
-      @reservation_test = Hotel::Reservation.new([Date.new(2019,9,1), Date.new(2019,9,2)], @room_test)
+      @reservation_test = Hotel::Reservation.new(Date.new(2019,9,1), Date.new(2019,9,3), @room_test)
     end
     
     it "is an instance of reservation" do
@@ -14,8 +14,8 @@ describe "Reservation class" do
     end
     
     it "reservation has start date and end date of instance of date" do
-      expect(@reservation_test.date_range.first).must_be_kind_of Date
-      expect(@reservation_test.date_range.last).must_be_kind_of Date
+      expect(@reservation_test.start_date).must_be_kind_of Date
+      expect(@reservation_test.end_date).must_be_kind_of Date
     end
     
     it "adds cost variable with cost of reservation" do
@@ -48,11 +48,11 @@ describe "Reservation class" do
       }.must_raise ArgumentError
     end    
     
-    it "creates date_range with correct length" do
-      reservation_test = Hotel::Reservation.new([Date.new(2019,9,1), Date.new(2019,9,2)], @room_test)
-      
-      expect(reservation_test.date_range.length) == 3
-    end
+    # it "creates date_range with correct length" do
+    #   reservation_test = Hotel::Reservation.new([Date.new(2019,9,1), Date.new(2019,9,2)], @room_test)
+    
+    #   expect(reservation_test.date_range.length) == 3
+    # end
     
   end
 end
