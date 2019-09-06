@@ -4,9 +4,8 @@ module Hotel
     attr_reader :id, :rate
     attr_accessor :dates_reserved
     
-    def initialize(id, rate = 200)
+    def initialize(id)
       @id = id
-      @rate = rate
       @dates_reserved = []
       @blocks_reservation = []
     end

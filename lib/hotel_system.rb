@@ -10,7 +10,7 @@ module Hotel
     def initialize
       @rooms = []
       20.times do |i|
-        @rooms << Hotel::Room.new((i + 1), 200)
+        @rooms << Hotel::Room.new((i + 1))
       end
       
       @reservations = []
@@ -25,6 +25,10 @@ module Hotel
       @rooms[available_room_id - 1].dates_reserved << {reservation_start: start_date, reservation_end: end_date}
       
       return new_reservation
+    end
+    
+    def create_block(start_date, end_date, room_numbers)
+      
     end
     
     # Does not list reservations that are on their final day

@@ -19,7 +19,7 @@ describe "Reservation class" do
     end
     
     it "adds cost variable with cost of reservation" do
-      expect(@reservation_test.cost).must_equal 400
+      expect(@reservation_test.cost).must_equal 400.0
     end
   end
   
