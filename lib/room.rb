@@ -8,6 +8,7 @@ module Hotel
       @id = id
       @rate = rate
       @dates_reserved = []
+      @blocks_reservation = []
     end
   end
 end

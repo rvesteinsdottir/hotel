@@ -12,8 +12,12 @@ module Hotel
       
       raise ArgumentError if end_date <= start_date
       
-      @cost = 200.0
+      @cost = calculate_cost
       @room_id = room_id
+    end
+    
+    def calculate_cost
+      ((@end_date - @start_date -1) * 200).to_f
     end
   end
 end
