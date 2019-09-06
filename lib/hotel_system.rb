@@ -27,9 +27,8 @@ module Hotel
       return new_reservation
     end
     
-    #DOES IT WORK?
-    #does not return reservations that have that day as an end date
-    def find_reservations(date)
+    # Does not list reservations that are on their final day
+    def list_reservations(date)
       res_on_date = @reservations.select do |reservation|
         date >= reservation.start_date && date < reservation.end_date
       end
@@ -37,45 +36,51 @@ module Hotel
       return res_on_date
     end
     
-    def find_available_rooms(start_date, end_date)
-      if end_date != nil        
-        available_rooms = []
-        
-        @rooms.each do |room|          
-          if room.dates_reserved == [] 
-            available_rooms << room.id
-          else       
-            available = 0   
-            room.dates_reserved.each_with_index do |res_date, i|
-              if start_date < res_date[:reservation_start] && end_date <= res_date[:reservation_start]
-                available += 1
-              elsif start_date >= res_date[:reservation_end] && end_date > res_date[:reservation_end]
-                available += 1
-              end
-            end
-            
-            if available == room.dates_reserved.length
+    # A room is open if a reservation is on its final day
+    def list_available_rooms(date)
+      available_rooms = []
+      @rooms.each do |room|  
+        if room.dates_reserved == [] 
+          available_rooms << room.id
+        else 
+          room.dates_reserved.each do |reservation|
+            if date < reservation[:reservation_start] && date <= reservation[:reservation_end]
+              available_rooms << room.id
+            elsif date > reservation[:reservation_start]  && date >= reservation[:reservation_end]
               available_rooms << room.id
             end
           end
         end
-        
-        return available_rooms unless available_rooms == []
-        
-        raise ArgumentError, "No rooms available at this time"
-      else
-        # returns room instance rather than room_id
-        #move to find_rooms?
-        available_rooms = @rooms.reject do |room|     
-          busy_rooms = room.dates_reserved.select do |dates| 
-            dates[:reservation_start] <= start_date && start_date < dates[:reservation_end]
-          end
-          
-          busy_rooms != []
-        end
       end
       
       return available_rooms
+    end
+    
+    def find_available_rooms(start_date, end_date)    
+      available_rooms = []
+      
+      @rooms.each do |room|          
+        if room.dates_reserved == [] 
+          available_rooms << room.id
+        else       
+          available = 0   
+          room.dates_reserved.each do |reservation|
+            if start_date < reservation[:reservation_start] && end_date <= reservation[:reservation_start]
+              available += 1
+            elsif start_date >= reservation[:reservation_end] && end_date > reservation[:reservation_end]
+              available += 1
+            end
+          end
+          
+          if available == room.dates_reserved.length
+            available_rooms << room.id
+          end
+        end
+      end
+      
+      return available_rooms unless available_rooms == []
+      
+      raise ArgumentError, "No rooms available at this time"
     end
   end
 end
