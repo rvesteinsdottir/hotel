@@ -118,12 +118,12 @@ describe "Hotel System class" do
     end
     
     it "raises argument error if rooms not available" do
-      expect{@system.create_block(Date.new(2019,9,3), Date.new(2019,9,4), [1,2,5])}.must_raise ArgumentError
+      expect{@system.create_block(Date.new(2019,9,3), Date.new(2019,9,4), [1,2,5], 190)}.must_raise ArgumentError
     end
     
     it "adds block to list of blocks" do
       expect(@system.blocks.length).must_equal 0
-      @system.create_block(Date.new(2019,9,19), Date.new(2019,9,20), [1,2,5])
+      @system.create_block(Date.new(2019,9,19), Date.new(2019,9,20), [1,2,5], 190)
       expect(@system.blocks.length).must_equal 1
     end
   end

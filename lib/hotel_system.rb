@@ -28,14 +28,23 @@ module Hotel
       return new_reservation
     end
     
-    def create_block(start_date, end_date, room_numbers)
+    def create_block(start_date, end_date, room_numbers, discounted_rate)
       room_numbers.each do |room_id|
         raise ArgumentError, "Room #{room_id} not available for given date range" unless find_available_rooms(start_date, end_date).include?(room_id)
       end
       
-      new_block = Hotel::Block.new(start_date, end_date, room_numbers)
+      new_block = Hotel::Block.new(start_date, end_date, room_numbers, discounted_rate)
       
       @blocks << new_block
+    end
+    
+    def make_reservation_from_block(start_date, end_date, room_id)
+      # do I need a block id?
+      # raise exception if start and end date do not match
+      # raise exception if ID does not match
+      
+      # add to room list in same format as res
+      # add to blocks list
     end
     
     # Does not list reservations that are on their final day
@@ -67,6 +76,7 @@ module Hotel
       return available_rooms
     end
     
+    #NEED THIS TO INCLUDE BLCOKS
     def find_available_rooms(start_date, end_date)    
       available_rooms = []
       
@@ -80,6 +90,16 @@ module Hotel
               available += 1
             elsif start_date >= reservation[:reservation_end] && end_date > reservation[:reservation_end]
               available += 1
+            end
+          end
+          
+          unless room.blocks == []
+            room.blocks.each do |block_reservation|
+              if start_date < block_reservation[:reservation_start] && end_date <= block_reservation[:reservation_start]
+                available -= 1
+              elsif start_date >= block_reservation[:reservation_end] && end_date > block_reservation[:reservation_end]
+                available -= 1
+              end
             end
           end
           
