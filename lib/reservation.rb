@@ -8,7 +8,6 @@ module Hotel
       @end_date = end_date
       
       raise ArgumentError unless start_date.class == Date && end_date.class == Date
-      
       raise ArgumentError if end_date <= start_date
       
       @cost = ((@end_date - @start_date) * 200).to_f

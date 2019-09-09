@@ -2,7 +2,7 @@ require_relative 'test_helper'
 
 describe "Reservation class" do
   
-  describe "Reservation instantiation" do
+  describe "initializer" do
     before do
       @room_test = 7
       
@@ -23,7 +23,7 @@ describe "Reservation class" do
     end
   end
   
-  describe "Validates date range" do
+  describe "validates date range" do
     before do
       @room_test = 7
     end

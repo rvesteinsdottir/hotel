@@ -1,8 +1,8 @@
 require_relative 'test_helper'
 
-describe "Hotel System class" do
+describe "HotelSystem class" do
   
-  describe "Initializer" do
+  describe "initializer" do
     before do
       @system = Hotel::HotelSystem.new
     end
@@ -31,18 +31,18 @@ describe "Hotel System class" do
     it "adds an instance of reservation to reservation list" do
       expect(@system.reservations.length).must_equal 0
       
-      new_reservation = @system.make_reservation(Date.new(2019,9,1), Date.new(2019,9,3))
+      @system.make_reservation(Date.new(2019,9,1), Date.new(2019,9,3))
       
-      expect(@system.reservations.last.room_id).must_equal new_reservation.room_id
       expect(@system.reservations.length).must_equal 1
+      expect(@system.reservations.last.start_date).must_equal Date.new(2019,9,1)
     end
     
     it "adds reservation to 'dates_reserved' variable for the assigned room" do
       expect(@system.rooms[0].dates_reserved).must_equal []
       
-      new_reservation = @system.make_reservation(Date.new(2019,9,1), Date.new(2019,9,3))
+      @system.make_reservation(Date.new(2019,9,1), Date.new(2019,9,3))
       
-      expect(@system.rooms[0].dates_reserved[0][:reservation_start]).must_equal Date.new(2019,9,1)
+      expect(@system.rooms[0].dates_reserved[0][:start]).must_equal Date.new(2019,9,1)
     end
     
     it "exception is raised if no available rooms in date range" do
@@ -75,13 +75,12 @@ describe "Hotel System class" do
   describe "list_available_rooms" do
     before do
       @system = Hotel::HotelSystem.new
-      @system.make_reservation( Date.new(2019,9,1), Date.new(2019,9,5))
       
+      @system.make_reservation(Date.new(2019,9,1), Date.new(2019,9,5))
       @system.make_reservation(Date.new(2019,9,3), Date.new(2019,9,4))
     end
     
     it "returns a list of all rooms that are available for a specific date" do
-      
       expect(@system.list_available_rooms(Date.new(2019,8,29)).length).must_equal 20
       expect(@system.list_available_rooms(Date.new(2019,9,3)).length).must_equal 18
       expect(@system.list_available_rooms(Date.new(2019,9,4)).length).must_equal 19
@@ -91,17 +90,22 @@ describe "Hotel System class" do
   describe "find_available_rooms" do
     before do
       @system = Hotel::HotelSystem.new
-      @system.make_reservation( Date.new(2019,9,1), Date.new(2019,9,5))
       
+      @system.make_reservation( Date.new(2019,9,1), Date.new(2019,9,5))
       @system.make_reservation(Date.new(2019,9,3), Date.new(2019,9,4))
     end
     
     it "returns a list of all rooms that are available for an overlapping date range" do
       expect(@system.find_available_rooms(Date.new(2019,9,4),Date.new(2019,9,6)).length).must_equal 19
+      expect(@system.find_available_rooms(Date.new(2019,8,19),Date.new(2019,9,16)).length).must_equal 18
     end
     
-    it "returns a list of all rooms that are available for a date range before reservations" do
+    it "returns a list of all rooms that are available for a date range before created reservations" do
       expect(@system.find_available_rooms(Date.new(2019,8,29),Date.new(2019,8,30)).length).must_equal 20
+    end
+    
+    it "returns a list of all rooms that are available for a date range after created reservations" do
+      expect(@system.find_available_rooms(Date.new(2019,9,19),Date.new(2019,9,16)).length).must_equal 20
     end
     
     it "a room that is part of block is not available" do 
@@ -116,7 +120,6 @@ describe "Hotel System class" do
     before do
       @system = Hotel::HotelSystem.new
       @system.make_reservation( Date.new(2019,9,1), Date.new(2019,9,5))
-      
       @system.make_reservation(Date.new(2019,9,3), Date.new(2019,9,4))
     end
     
@@ -128,7 +131,9 @@ describe "Hotel System class" do
     
     it "adds block to list of blocks" do
       expect(@system.blocks.length).must_equal 0
+      
       @system.create_block(Date.new(2019,9,19), Date.new(2019,9,20), [1,2,5], 190)
+      
       expect(@system.blocks.length).must_equal 1
     end
   end
@@ -167,10 +172,8 @@ describe "Hotel System class" do
       expect(@system.blocks[0].available_room_numbers).must_equal [1,2,5]
       
       @system.make_reservation_from_block(Date.new(2019,9,3), Date.new(2019,9,4), 5)
+      
       expect(@system.blocks[0].available_room_numbers).must_equal [1,2]
     end
-    
   end
-  
-  
 end

@@ -7,7 +7,6 @@ module Hotel
       @end_date = end_date
       
       raise ArgumentError unless start_date.class == Date && end_date.class == Date
-      
       raise ArgumentError if end_date <= start_date
       
       @room_numbers = room_numbers

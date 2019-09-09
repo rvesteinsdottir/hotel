@@ -1,7 +1,7 @@
 require_relative 'test_helper'
 
 describe "Block class" do
-  describe "Initializer" do
+  describe "initializer" do
     before do
       room_test = [7,9,11]
       

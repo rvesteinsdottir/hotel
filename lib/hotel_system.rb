@@ -10,23 +10,23 @@ module Hotel
     
     def initialize
       @rooms = []
+      @reservations = []
+      @blocks = []
+      
       20.times do |i|
         @rooms << Hotel::Room.new((i + 1))
       end
-      
-      @reservations = []
-      @blocks = []
     end
     
-    def make_reservation(start_date, end_date)
-      available_room_id = find_available_rooms(start_date, end_date).first.to_i
+    def make_reservation(start_date, end_date, room_id = nil)
+      if room_id == nil
+        room_id = find_available_rooms(start_date, end_date).first.to_i
+      end
       
-      new_reservation = Hotel::Reservation.new(start_date, end_date, available_room_id)
+      new_reservation = Hotel::Reservation.new(start_date, end_date, room_id)
       
       @reservations << new_reservation
-      @rooms[available_room_id - 1].dates_reserved << {reservation_start: start_date, reservation_end: end_date}
-      
-      return new_reservation
+      @rooms[room_id - 1].dates_reserved << {start: start_date, end: end_date}
     end
     
     def create_block(start_date, end_date, room_numbers, discounted_rate)
@@ -38,7 +38,7 @@ module Hotel
       
       @blocks << new_block
       room_numbers.each do |room_id|
-        @rooms[room_id - 1].blocks << {block_start: start_date, block_end: end_date}
+        @rooms[room_id - 1].blocks << {start: start_date, end: end_date}
       end
     end
     
@@ -53,16 +53,14 @@ module Hotel
           room_available = true
           discounted_cost = block.cost
         end
+        
         block.available_room_numbers.delete(room_id)
       end
       
       raise ArgumentError, "The room you requested is not available" unless room_available == true 
       
-      new_reservation = Hotel::Reservation.new(start_date, end_date, room_id)
-      new_reservation.cost = discounted_cost
-      
-      @reservations << new_reservation
-      @rooms[room_id - 1].dates_reserved << {reservation_start: start_date, reservation_end: end_date}
+      make_reservation(start_date, end_date, room_id)
+      @reservations.last.cost = discounted_cost
     end
     
     # Does not list reservations that are on their final day
@@ -82,9 +80,9 @@ module Hotel
           available_rooms << room.id
         else 
           room.dates_reserved.each do |reservation|
-            if date < reservation[:reservation_start] && date <= reservation[:reservation_end]
+            if date < reservation[:start] && date <= reservation[:end]
               available_rooms << room.id
-            elsif date > reservation[:reservation_start]  && date >= reservation[:reservation_end]
+            elsif date > reservation[:start]  && date >= reservation[:end]
               available_rooms << room.id
             end
           end
@@ -94,7 +92,17 @@ module Hotel
       return available_rooms
     end
     
-    #NEED THIS TO INCLUDE BLCOKS
+    def check_reservation_conflicts(start_date, end_date, reservation_type, num_available_rooms)
+      if start_date < reservation_type[:start] && end_date <= reservation_type[:start]
+        num_available_rooms += 1
+      elsif start_date >= reservation_type[:end] && end_date > reservation_type[:end]
+        num_available_rooms += 1
+      end
+      
+      return num_available_rooms
+    end
+    
+    # Returns a list of avialable room_ids
     def find_available_rooms(start_date, end_date)    
       available_rooms = []
       
@@ -102,27 +110,18 @@ module Hotel
         if room.dates_reserved == [] && room.blocks == []
           available_rooms << room.id
         else       
-          available = 0   
+          num_available_rooms = 0   
           room.dates_reserved.each do |reservation|
-            if start_date < reservation[:reservation_start] && end_date <= reservation[:reservation_start]
-              available += 1
-            elsif start_date >= reservation[:reservation_end] && end_date > reservation[:reservation_end]
-              available += 1
-            end
+            num_available_rooms += check_reservation_conflicts(start_date, end_date, reservation, num_available_rooms)
           end
           
-          # removes from list of available rooms if room has block reservation
           if room.blocks != []
-            room.blocks.each do |block_reservation|
-              if start_date < block_reservation[:block_start] && end_date <= block_reservation[:block_start]
-                available += 1
-              elsif start_date >= block_reservation[:block_end] && end_date > block_reservation[:block_end]
-                available += 1
-              end
+            room.blocks.each do |block|
+              num_available_rooms += check_reservation_conflicts(start_date, end_date, block, num_available_rooms)
             end
           end
           
-          if available == (room.dates_reserved.length + room.blocks.length)
+          if num_available_rooms == (room.dates_reserved.length + room.blocks.length)
             available_rooms << room.id
           end
         end
