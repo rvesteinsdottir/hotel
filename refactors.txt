@@ -1,0 +1,12 @@
+Hotel Refactors
+9/8/2019
+
+list_available_rooms could use .map rather than .each
+
+list_available_rooms and find_available_rooms seem like redundant methods. I tried to collapse the two by making the end_date optional, but could not find the correct conditionals to use if end_date = nil, because end_date = start_date did not work. I would like to experiment with conditionals to find one that would work for both instances, since these methods essentailly do the same thing.
+
+start_date and end_date are variable names that are overused in hotel_system, block, and reservation classes. It would be better practice to differentiate when I am referring to a block start date, versus a reservation start date, versus a start date that needs to be validated before assigning to a reservation or block.
+
+@rooms in HotelSystem is an array, because I am often searching by room_id it makes more sense for @rooms to be a hash, with the room_id as the key to the hash
+
+HotelSystem has far too many methods. I am not sure how to do this without creating too many dependencies but this class should probably be broken up further.

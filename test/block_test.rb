@@ -25,6 +25,5 @@ describe "Block class" do
         Hotel::Block.new(Date.new(2019,9,17), Date.new(2019,9,20), [1,2,5,8,17,10], 190)
       }.must_raise ArgumentError
     end
-    
   end 
 end

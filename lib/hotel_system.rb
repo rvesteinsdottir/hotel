@@ -19,9 +19,7 @@ module Hotel
     end
     
     def make_reservation(start_date, end_date, room_id = nil)
-      if room_id == nil
-        room_id = find_available_rooms(start_date, end_date).first.to_i
-      end
+      room_id = find_available_rooms(start_date, end_date).first.to_i if room_id == nil
       
       new_reservation = Hotel::Reservation.new(start_date, end_date, room_id)
       

@@ -17,5 +17,4 @@ describe "Room class" do
       expect(@room.blocks).must_equal []
     end
   end
-  
 end
