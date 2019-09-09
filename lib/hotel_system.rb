@@ -2,6 +2,7 @@ require 'date'
 
 require_relative 'room'
 require_relative 'reservation'
+require_relative 'block'
 
 module Hotel
   class HotelSystem
@@ -36,15 +37,32 @@ module Hotel
       new_block = Hotel::Block.new(start_date, end_date, room_numbers, discounted_rate)
       
       @blocks << new_block
+      room_numbers.each do |room_id|
+        @rooms[room_id - 1].blocks << {block_start: start_date, block_end: end_date}
+      end
     end
     
     def make_reservation_from_block(start_date, end_date, room_id)
-      # do I need a block id?
-      # raise exception if start and end date do not match
-      # raise exception if ID does not match
+      room_available = false
+      discounted_cost = 0
       
-      # add to room list in same format as res
-      # add to blocks list
+      @blocks.each do |block|
+        if block.available_room_numbers.include?(room_id)
+          raise ArgumentError, "You can only reserve this room for the full duration of the block" unless block.start_date == start_date && block.end_date == end_date
+          
+          room_available = true
+          discounted_cost = block.cost
+        end
+        block.available_room_numbers.delete(room_id)
+      end
+      
+      raise ArgumentError, "The room you requested is not available" unless room_available == true 
+      
+      new_reservation = Hotel::Reservation.new(start_date, end_date, room_id)
+      new_reservation.cost = discounted_cost
+      
+      @reservations << new_reservation
+      @rooms[room_id - 1].dates_reserved << {reservation_start: start_date, reservation_end: end_date}
     end
     
     # Does not list reservations that are on their final day
@@ -81,7 +99,7 @@ module Hotel
       available_rooms = []
       
       @rooms.each do |room|          
-        if room.dates_reserved == [] 
+        if room.dates_reserved == [] && room.blocks == []
           available_rooms << room.id
         else       
           available = 0   
@@ -93,17 +111,18 @@ module Hotel
             end
           end
           
-          unless room.blocks == []
+          # removes from list of available rooms if room has block reservation
+          if room.blocks != []
             room.blocks.each do |block_reservation|
-              if start_date < block_reservation[:reservation_start] && end_date <= block_reservation[:reservation_start]
-                available -= 1
-              elsif start_date >= block_reservation[:reservation_end] && end_date > block_reservation[:reservation_end]
-                available -= 1
+              if start_date < block_reservation[:block_start] && end_date <= block_reservation[:block_start]
+                available += 1
+              elsif start_date >= block_reservation[:block_end] && end_date > block_reservation[:block_end]
+                available += 1
               end
             end
           end
           
-          if available == room.dates_reserved.length
+          if available == (room.dates_reserved.length + room.blocks.length)
             available_rooms << room.id
           end
         end

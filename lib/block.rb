@@ -11,8 +11,11 @@ module Hotel
       raise ArgumentError if end_date <= start_date
       
       @room_numbers = room_numbers
+      
+      raise ArgumentError if @room_numbers.length > 5
+      
       @available_room_numbers = room_numbers
-      @cost = ((@end_date - @start_date) * discounted_rate).to_f
+      @cost = ((@end_date - start_date) * discounted_rate).to_f
     end
   end
 end

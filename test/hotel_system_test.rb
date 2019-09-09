@@ -88,7 +88,7 @@ describe "Hotel System class" do
     end
   end
   
-  describe "find_available_room" do
+  describe "find_available_rooms" do
     before do
       @system = Hotel::HotelSystem.new
       @system.make_reservation( Date.new(2019,9,1), Date.new(2019,9,5))
@@ -104,9 +104,12 @@ describe "Hotel System class" do
       expect(@system.find_available_rooms(Date.new(2019,8,29),Date.new(2019,8,30)).length).must_equal 20
     end
     
-    it "room that is part of block is not available" do 
+    it "a room that is part of block is not available" do 
+      @system.create_block(Date.new(2019,9,1), Date.new(2019,9,5),[3,4,17,15], 190)
+      
+      expect(@system.find_available_rooms(Date.new(2019,9,1), Date.new(2019,9,5)).include?(4)).must_equal false
+      expect(@system.find_available_rooms(Date.new(2019,9,1), Date.new(2019,9,5)).include?(18)).must_equal true
     end
-    
   end
   
   describe "create_block" do
@@ -118,7 +121,9 @@ describe "Hotel System class" do
     end
     
     it "raises argument error if rooms not available" do
-      expect{@system.create_block(Date.new(2019,9,3), Date.new(2019,9,4), [1,2,5], 190)}.must_raise ArgumentError
+      expect{
+        @system.create_block(Date.new(2019,9,3), Date.new(2019,9,4), [1,2,5], 190)
+      }.must_raise ArgumentError
     end
     
     it "adds block to list of blocks" do
@@ -129,6 +134,42 @@ describe "Hotel System class" do
   end
   
   describe "reserve_from_block" do
+    before do
+      @system = Hotel::HotelSystem.new
+      @system.create_block(Date.new(2019,9,3), Date.new(2019,9,4), [1,2,5], 190)
+    end
+    
+    it "raises argument error if start and end date do not match start end of block with specific room" do
+      expect{
+        @system.make_reservation_from_block(Date.new(2019,9,2), Date.new(2019,9,4), 1)
+      }.must_raise ArgumentError
+    end
+    
+    it "raises argument error if room is not part of the block" do
+      expect{
+        @system.make_reservation_from_block(Date.new(2019,9,3), Date.new(2019,9,4), 15)
+      }.must_raise ArgumentError
+    end
+    
+    it "makes new reservation with start and end time at specific room" do
+      expect(@system.reservations).must_equal []
+      
+      @system.make_reservation_from_block(Date.new(2019,9,3), Date.new(2019,9,4), 5)
+      
+      expect(@system.reservations.length).must_equal 1
+      expect(@system.reservations[0].start_date).must_equal Date.new(2019,9,3)
+      expect(@system.reservations[0].end_date).must_equal Date.new(2019,9,4)
+      expect(@system.reservations[0].room_id).must_equal 5
+      expect(@system.reservations[0].cost).must_equal 190.0
+    end
+    
+    it "removes room id from 'available_rooms' associated with that block" do
+      expect(@system.blocks[0].available_room_numbers).must_equal [1,2,5]
+      
+      @system.make_reservation_from_block(Date.new(2019,9,3), Date.new(2019,9,4), 5)
+      expect(@system.blocks[0].available_room_numbers).must_equal [1,2]
+    end
+    
   end
   
   

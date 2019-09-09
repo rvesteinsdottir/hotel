@@ -19,5 +19,12 @@ describe "Block class" do
       expect(@block_test.end_date).must_equal Date.new(2019,9,3)
       expect(@block_test.available_room_numbers).must_equal [7,9,11]
     end
-  end
+    
+    it "returns argument error if more than 5 rooms in block" do
+      expect{
+        Hotel::Block.new(Date.new(2019,9,17), Date.new(2019,9,20), [1,2,5,8,17,10], 190)
+      }.must_raise ArgumentError
+    end
+    
+  end 
 end
