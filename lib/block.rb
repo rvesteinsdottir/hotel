@@ -11,7 +11,7 @@ module Hotel
       
       @room_numbers = room_numbers
       
-      raise ArgumentError if @room_numbers.length > 5
+      raise ArgumentError, "A block cannot be reserved for more than 5 days." if @room_numbers.length > 5
       
       @available_room_numbers = room_numbers
       @cost = ((@end_date - start_date) * discounted_rate).to_f

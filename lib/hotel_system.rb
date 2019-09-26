@@ -14,14 +14,14 @@ module Hotel
       @blocks = []
       
       20.times do |i|
-        @rooms << Hotel::Room.new((i + 1))
+        @rooms << Room.new(i + 1)
       end
     end
     
     def make_reservation(start_date, end_date, room_id = nil)
       room_id = find_available_rooms(start_date, end_date).first.to_i if room_id == nil
       
-      new_reservation = Hotel::Reservation.new(start_date, end_date, room_id)
+      new_reservation = Reservation.new(start_date, end_date, room_id)
       
       @reservations << new_reservation
       @rooms[room_id - 1].dates_reserved << {start: start_date, end: end_date}
@@ -32,7 +32,7 @@ module Hotel
         raise ArgumentError, "Room #{room_id} not available for given date range" unless find_available_rooms(start_date, end_date).include?(room_id)
       end
       
-      new_block = Hotel::Block.new(start_date, end_date, room_numbers, discounted_rate)
+      new_block = Block.new(start_date, end_date, room_numbers, discounted_rate)
       
       @blocks << new_block
       room_numbers.each do |room_id|
@@ -100,7 +100,7 @@ module Hotel
       return num_available_rooms
     end
     
-    # Returns a list of avialable room_ids
+    # Returns a list of available room_ids
     def find_available_rooms(start_date, end_date)    
       available_rooms = []
       

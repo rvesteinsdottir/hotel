@@ -38,3 +38,5 @@ Impl B better adheres to the single responsibility principle because each class 
 # Bonus question once you've read Metz ch. 3: Which implementation is more loosely coupled?
 
 Impl B is more loosely coupled because the higher level classes have fewer dependencies on lower level classes. In Impl A, the Order class needs to know how a ShoppingCart is organized and what information is stored within a CartEntry in order to calculate total price. This means the classes are not loosely coupled. In Impl B, the Order class only needs to know that ShoppingCart has a price, but does not need to know anything about the ShoppingCart or CartEntry classes beyond that. So Impl B is loosely coupled.
+
+# Hotel Redesign
