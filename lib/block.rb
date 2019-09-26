@@ -16,5 +16,13 @@ module Hotel
       @available_room_numbers = room_numbers
       @cost = ((@end_date - start_date) * discounted_rate).to_f
     end
+    
+    def room_available?(room_id)
+      return @available_room_numbers.include?(room_id)
+    end
+    
+    def mark_unavailable(room_id)
+      @available_room_numbers.delete(room_id)
+    end
   end
 end

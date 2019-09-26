@@ -24,7 +24,8 @@ module Hotel
       new_reservation = Reservation.new(start_date, end_date, room_id)
       
       @reservations << new_reservation
-      @rooms[room_id - 1].dates_reserved << {start: start_date, end: end_date}
+      
+      @rooms[room_id - 1].add_reservation(start_date, end_date)
     end
     
     def create_block(start_date, end_date, room_numbers, discounted_rate)
@@ -36,7 +37,7 @@ module Hotel
       
       @blocks << new_block
       room_numbers.each do |room_id|
-        @rooms[room_id - 1].blocks << {start: start_date, end: end_date}
+        @rooms[room_id - 1].add_block(start_date, end_date)
       end
     end
     
@@ -45,14 +46,14 @@ module Hotel
       discounted_cost = 0
       
       @blocks.each do |block|
-        if block.available_room_numbers.include?(room_id)
+        if block.room_available?(room_id)
           raise ArgumentError, "You can only reserve this room for the full duration of the block" unless block.start_date == start_date && block.end_date == end_date
           
           room_available = true
           discounted_cost = block.cost
         end
         
-        block.available_room_numbers.delete(room_id)
+        block.mark_unavailable(room_id)
       end
       
       raise ArgumentError, "The room you requested is not available" unless room_available == true 

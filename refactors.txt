@@ -18,6 +18,12 @@ Additional Hotel Refactors
 
 Room list, block list, reservation list should be class variables so that they're easier to call throughout hotel_system.rb
 
+Should I be making helper methods for things like rooms.dates_reserved.length?
+
+
+
+Done :
+
 Add code to reduce the following lines of code, found in two places in hotel_system.rb:
   @rooms[room_id - 1].dates_reserved << {start: start_date, end: end_date}
 This code should delegate this behavior to the Room class so that HotelSystem can have less information about how the Room class works.
@@ -28,3 +34,5 @@ Delegate behavior of finding if the list of available room #s includes room_id t
 
 Also change this deletion so that Block class performs this behavior rather than HotelSystem class:
   block.available_room_numbers.delete(room_id)
+
+
