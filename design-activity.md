@@ -40,3 +40,13 @@ Impl B better adheres to the single responsibility principle because each class 
 Impl B is more loosely coupled because the higher level classes have fewer dependencies on lower level classes. In Impl A, the Order class needs to know how a ShoppingCart is organized and what information is stored within a CartEntry in order to calculate total price. This means the classes are not loosely coupled. In Impl B, the Order class only needs to know that ShoppingCart has a price, but does not need to know anything about the ShoppingCart or CartEntry classes beyond that. So Impl B is loosely coupled.
 
 # Hotel Redesign
+Add code to reduce the following lines of code, found in two places in hotel_system.rb:
+  @rooms[room_id - 1].dates_reserved << {start: start_date, end: end_date}
+This code should delegate this behavior to the Room class so that HotelSystem can have less information about how the Room class works.
+
+Change this test so that HotelSystem and Block classes are more loosely coupled:
+  if block.available_room_numbers.include?(room_id)
+Delegate behavior of finding if the list of available room #s includes room_id to the Block class so HotelSystem can have less information about how the Block class works.
+
+While you're at it, change this deletion so that Block class performs this behavior rather than HotelSystem class:
+  block.available_room_numbers.delete(room_id)
