@@ -13,5 +13,9 @@ module Hotel
       @cost = ((@end_date - @start_date) * 200).to_f
       @room_id = room_id
     end
+    
+    def update_cost(new_cost)
+      @cost = new_cost
+    end
   end
 end

@@ -19,7 +19,9 @@ module Hotel
     end
     
     def make_reservation(start_date, end_date, room_id = nil)
-      room_id = find_available_rooms(start_date, end_date).first.to_i if room_id == nil
+      if room_id == nil
+        room_id = find_available_rooms(start_date, end_date).first.to_i 
+      end
       
       new_reservation = Reservation.new(start_date, end_date, room_id)
       
@@ -59,7 +61,8 @@ module Hotel
       raise ArgumentError, "The room you requested is not available" unless room_available == true 
       
       make_reservation(start_date, end_date, room_id)
-      @reservations.last.cost = discounted_cost
+      
+      @reservations.last.update_cost(discounted_cost)
     end
     
     # Does not list reservations that are on their final day
@@ -73,22 +76,22 @@ module Hotel
     
     # A room is open if a reservation is on its final day
     def list_available_rooms(date)
-      available_rooms = []
+      available_room_ids = []
       @rooms.each do |room|  
         if room.dates_reserved == [] 
-          available_rooms << room.id
+          available_room_ids << room.id
         else 
           room.dates_reserved.each do |reservation|
             if date < reservation[:start] && date <= reservation[:end]
-              available_rooms << room.id
+              available_room_ids << room.id
             elsif date > reservation[:start]  && date >= reservation[:end]
-              available_rooms << room.id
+              available_room_ids << room.id
             end
           end
         end
       end
       
-      return available_rooms
+      return available_room_ids
     end
     
     def check_reservation_conflicts(start_date, end_date, reservation_type, num_available_rooms)
@@ -103,11 +106,11 @@ module Hotel
     
     # Returns a list of available room_ids
     def find_available_rooms(start_date, end_date)    
-      available_rooms = []
+      available_room_ids = []
       
       @rooms.each do |room|          
         if room.dates_reserved == [] && room.blocks == []
-          available_rooms << room.id
+          available_room_ids << room.id
         else       
           num_available_rooms = 0   
           room.dates_reserved.each do |reservation|
@@ -121,12 +124,12 @@ module Hotel
           end
           
           if num_available_rooms == (room.dates_reserved.length + room.blocks.length)
-            available_rooms << room.id
+            available_room_ids << room.id
           end
         end
       end
       
-      return available_rooms unless available_rooms == []
+      return available_room_ids unless available_room_ids == []
       
       raise ArgumentError, "No rooms available at this time"
     end
